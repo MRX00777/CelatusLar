@@ -2,26 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 
 
 class PostController extends Controller
 {
-    public function index() {
-        $posts = Post::all();
+    public function index()
+    {
+//        $posts = Post::all();
 
-        return view('post/index',  compact('posts'));
+        $categories = Category::find(1);
+        $posts = Post::find(1);
+
+
+        dd($posts->category);
+        // return view('post/index',  compact('posts'));
     }
 
 
-
-    public function create() {
+    public function create()
+    {
 
         return view('post/create');
 
     }
 
-    public function store() {
+    public function store()
+    {
 
         $data = request()->validate([
             'title' => 'string',
@@ -32,7 +40,8 @@ class PostController extends Controller
         return redirect(route('post.index'));
     }
 
-    public function update(Post $post) {
+    public function update(Post $post)
+    {
 
         $data = request()->validate([
             'title' => 'string',
@@ -43,16 +52,19 @@ class PostController extends Controller
         return redirect(route('post.show', $post->id));
     }
 
-    public function show(Post $post){
+    public function show(Post $post)
+    {
         return view('post/show', compact('post'));
     }
 
-    public function edit(Post $post) {
+    public function edit(Post $post)
+    {
         return view('post/edit', compact('post'));
     }
 
 
-    public function destroy(Post $post) {
+    public function destroy(Post $post)
+    {
         $post->delete();
         return redirect(route('post.index'));
     }
