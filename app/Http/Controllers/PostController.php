@@ -4,27 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
 
 
 class PostController extends Controller
 {
     public function index()
     {
-//        $posts = Post::all();
+        $posts = Post::all();
 
-        $categories = Category::find(1);
-        $posts = Post::find(1);
-
-
-        dd($posts->category);
-        // return view('post/index',  compact('posts'));
+        return view('post/index', compact('posts'));
     }
 
 
     public function create()
     {
+        $categories = Category::all();
+        $tags = Tag::all();
 
-        return view('post/create');
+        return view('post/create', compact('categories', 'tags'));
 
     }
 
@@ -32,11 +31,26 @@ class PostController extends Controller
     {
 
         $data = request()->validate([
-            'title' => 'string',
-            'content' => 'string',
-            'image' => 'string'
+            'title' => 'required | string',
+            'content' => 'required | string',
+            'image' => 'required | string',
+            'category_id' => '',
+            'tags' => ''
         ]);
-        Post::create($data);
+        $tags = $data['tags'];
+        unset($data['tags']);
+
+
+        $post = Post::create($data);
+
+        $post->tags()->attach($tags);
+
+//        foreach ($tags as $tag) {
+//            PostTag::firstOrCreate([
+//                'tag_id' => $tag,
+//                'post_id' => $post->id,
+//            ]);
+//    }
         return redirect(route('post.index'));
     }
 
@@ -46,9 +60,16 @@ class PostController extends Controller
         $data = request()->validate([
             'title' => 'string',
             'content' => 'string',
-            'image' => 'string'
+            'image' => 'string',
+            'category_id' => '',
+            'tags' => '',
         ]);
+
+        $tags = $data['tags'];
+        unset($data['tags']);
+
         $post->update($data);
+        $post->tags()->sync($tags);
         return redirect(route('post.show', $post->id));
     }
 
@@ -59,7 +80,9 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
-        return view('post/edit', compact('post'));
+        $categories = Category::all();
+        $tags = Tag::all();
+        return view('post/edit', compact('post', 'categories', 'tags'));
     }
 
 
