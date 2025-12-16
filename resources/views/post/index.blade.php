@@ -8,6 +8,9 @@
     @foreach($posts as $post)
 
 
-        <div><a href="/posts/{{ $post->id }}">{{ $post->title }}</a></div>
+        <div><a href="/posts/{{ $post->id }}">{{$post->id . '. ' . $post->title }}</a></div>
     @endforeach
+{{--    <div class="mt-3">--}}
+{{--        {{ $posts->links() }}--}}
+{{--    </div>--}}
 @endsection
